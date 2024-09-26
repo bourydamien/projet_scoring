@@ -6,7 +6,7 @@ import os
 # Ajoutez le chemin du dossier utils au sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from utils.inference import add_features_and_correct_anomaly  # Assurez-vous d'importer correctement la fonction
+from utils.inference import add_features_and_correct_anomaly  
 
 def test_add_features_and_correct_anomaly():
     # Créer un DataFrame d'exemple avec des données simplifiées pour le test
