@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 
-# Ajoutez le chemin du dossier utils au sys.path
+# Ajoutez le chemin du dossier utils
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from utils.inference import add_features_and_correct_anomaly  
