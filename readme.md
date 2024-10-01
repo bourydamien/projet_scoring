@@ -34,7 +34,9 @@ Le projet contient les éléments suivants :
 5. **Tests unitaires** : `test_api.py`
    - Tests unitaires pour l'API.
 
+## Liens utiles
 
+- [Dossier Google Drive contenant les artefacts du modèle](hhttps://drive.google.com/drive/folders/13rQaqQWk_-hCT2pnFcfvcB40eCWILBDG?usp=sharing)
 
 
 
