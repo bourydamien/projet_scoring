@@ -34,16 +34,7 @@ Le projet contient les éléments suivants :
 5. **Tests unitaires** : `test_api.py`
    - Tests unitaires pour l'API.
 
-## Installation
 
-Pour cloner et démarrer le projet localement, assurez-vous d'avoir les dépendances suivantes :
-
-- Python 3.8 ou supérieur
-- Google Colab pour l'entraînement du modèle
-- Google Drive pour le stockage des artefacts et données.
-- MLflow pour le suivi des expérimentations
-- Git Action pour la CD/CI
-- Render pour le cloud
 
 
 
