@@ -8,7 +8,7 @@ import pandas as pd
 import json
 from scipy import stats
 from catboost import CatBoostClassifier
-
+MODEL_FOLDER = os.path.join(os.path.dirname(__file__), 'models')
 
 def install_requirements(requirements_file='requirements.txt'):
     """
@@ -46,7 +46,7 @@ def load_preprocessing_objects():
         lambda_params = json.load(f)
 
     model = CatBoostClassifier()
-    model.load_model(os.path.join(MODEL_FOLDER, 'best_model.cbm'))
+    model.load_model(os.path.join(MODEL_FOLDER, 'best_model_with_weights.cbm'))
 
     return label_encoder, label_encoded_columns, one_hot_columns, scaler, transformed_columns, lambda_params, model
 
