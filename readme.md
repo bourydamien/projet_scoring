@@ -36,7 +36,7 @@ Le projet contient les éléments suivants :
 
 ## Liens utiles
 
-- [Dossier Google Drive contenant les artefacts du modèle](hhttps://drive.google.com/drive/folders/13rQaqQWk_-hCT2pnFcfvcB40eCWILBDG?usp=sharing)
+- [Dossier Google Drive contenant les artefacts du modèle](hhttps://drive.google.com/drive/folders/13rQaqQWk_-hCT2pnFcfvcB40eCWILBDG?usp=sharing) : https://drive.google.com/drive/folders/13rQaqQWk_-hCT2pnFcfvcB40eCWILBDG?usp=sharing
 
 
 
