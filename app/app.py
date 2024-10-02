@@ -23,6 +23,9 @@ from utils.inference import (
 )
 
 app = FastAPI()
+@app.get("/")
+async def root():
+    return {"message": "L'API de scoring fonctionne."}
 
 # Point d'entrée pour prédiction
 @app.post("/predict")
