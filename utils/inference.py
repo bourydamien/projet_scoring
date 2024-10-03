@@ -47,7 +47,7 @@ def load_preprocessing_objects(model_folder):
 
         # Charger les paramètres de transformation Box-Cox
         with open(os.path.join(model_folder, 'lambda_params.json'), 'rb') as f:
-            lambda_params = pickle.load(f)
+            lambda_params = json.load(f)
 
         print("Paramètres de transformation Box-Cox chargés avec succès.")
 
