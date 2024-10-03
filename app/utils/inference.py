@@ -8,8 +8,6 @@ import pandas as pd
 import json
 from scipy import stats
 from catboost import CatBoostClassifier
-BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
-MODEL_FOLDER = os.path.join(BASE_DIR, 'models')  
 
 def install_requirements(requirements_file='requirements.txt'):
     """
@@ -28,26 +26,26 @@ def install_requirements(requirements_file='requirements.txt'):
 
 # Charger les objets de preprocessing sauvegardés
 def load_preprocessing_objects():
-    with open(os.path.join(models, 'label_encoder.pkl'), 'rb') as f:
+    with open(os.path.join(MODEL_FOLDER, 'label_encoder.pkl'), 'rb') as f:
         label_encoder = pickle.load(f)
 
-    with open(os.path.join(models, 'label_encoded_columns.pkl'), 'rb') as f:
+    with open(os.path.join(MODEL_FOLDER, 'label_encoded_columns.pkl'), 'rb') as f:
         label_encoded_columns = pickle.load(f)
 
-    with open(os.path.join(models, 'one_hot_columns.pkl'), 'rb') as f:
+    with open(os.path.join(MODEL_FOLDER, 'one_hot_columns.pkl'), 'rb') as f:
         one_hot_columns = pickle.load(f)
 
-    with open(os.path.join(models, 'scaler.pkl'), 'rb') as f:
+    with open(os.path.join(MODEL_FOLDER, 'scaler.pkl'), 'rb') as f:
         scaler = joblib.load(f)
 
-    with open(os.path.join(models, 'transformed_columns.json'), 'r') as f:
+    with open(os.path.join(MODEL_FOLDER, 'transformed_columns.json'), 'r') as f:
         transformed_columns = json.load(f)
 
-    with open(os.path.join(models, 'lambda_params.json'), 'r') as f:
+    with open(os.path.join(MODEL_FOLDER, 'lambda_params.json'), 'r') as f:
         lambda_params = json.load(f)
 
     model = CatBoostClassifier()
-    model.load_model(os.path.join(models, 'best_model_with_weights.cbm'))
+    model.load_model(os.path.join(MODEL_FOLDER, 'best_model_with_weights.cbm'))
 
     return label_encoder, label_encoded_columns, one_hot_columns, scaler, transformed_columns, lambda_params, model
 
