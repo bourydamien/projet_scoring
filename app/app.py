@@ -21,7 +21,7 @@ from utils.inference import (
     apply_scaler,
     predict_with_catboost
 )
-MODEL_FOLDER = "app/utils/models/"
+MODEL_FOLDER = "app/models/"
 app = FastAPI()
 @app.get("/")
 async def root():
