@@ -28,27 +28,21 @@ def install_requirements(requirements_file='requirements.txt'):
 def load_preprocessing_objects(model_folder):
     with open(os.path.join(model_folder, 'label_encoders.pkl'), 'rb') as f:
         label_encoders = pickle.load(f)
-
-    with open(os.path.join(model_folder, 'label_encoded_columns.pkl'), 'rb') as f:
-        label_encoded_columns = pickle.load(f)
-
+    
     with open(os.path.join(model_folder, 'one_hot_columns.pkl'), 'rb') as f:
         one_hot_columns = pickle.load(f)
-
+    
     with open(os.path.join(model_folder, 'scaler.pkl'), 'rb') as f:
-        scaler = joblib.load(f)
+        scaler = pickle.load(f)
+    
+    with open(os.path.join(model_folder, 'lambda_params.pkl'), 'rb') as f:
+        lambda_params = pickle.load(f)
+    
+    with open(os.path.join(model_folder, 'catboost_model.pkl'), 'rb') as f:
+        catboost_model = pickle.load(f)
 
-    with open(os.path.join(model_folder, 'transformed_columns.json'), 'r') as f:
-        transformed_columns = json.load(f)
-
-    with open(os.path.join(model_folder, 'lambda_params.json'), 'r') as f:
-        lambda_params = json.load(f)
-
-    model = CatBoostClassifier()
-    model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
-
-    return label_encoders, label_encoded_columns, one_hot_columns, scaler, transformed_columns, lambda_params, model
-
+    # Assurez-vous que vous retournez exactement 6 valeurs
+    return label_encoders, one_hot_columns, scaler, None, lambda_params, catboost_model
 
 def add_features_and_correct_anomaly(df):
     df['DAYS_EMPLOYED_ANOM'] = df["DAYS_EMPLOYED"] == 365243
