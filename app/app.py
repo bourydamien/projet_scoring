@@ -33,35 +33,60 @@ async def predict(file: UploadFile = File(...)):
     try:
         # Lire le fichier uploadé
         contents = await file.read()
-        # Convertir le contenu en DataFrame
         df = pd.read_csv(io.BytesIO(contents))
         
         # Charger les objets de prétraitement
-        (label_encoders, one_hot_columns, scaler, transformed_columns, lambda_params, catboost_model) = load_preprocessing_objects(MODEL_FOLDER)
+        try:
+            (label_encoders, one_hot_columns, scaler, transformed_columns, lambda_params, catboost_model) = load_preprocessing_objects(MODEL_FOLDER)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur lors du chargement des objets de prétraitement : {str(e)}")
 
-        # Appliquer les étapes de prétraitement
-        df = add_features_and_correct_anomaly(df)  # Correction d'anomalies et ajout de features dérivées
+        # Étape 1 : Correction des anomalies et ajout de features dérivées
+        try:
+            df = add_features_and_correct_anomaly(df)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur dans add_features_and_correct_anomaly : {str(e)}")
+
+        # Étape 2 : Appliquer le label encoding
+        try:
+            df = apply_label_encoding(df, label_encoders)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur dans apply_label_encoding : {str(e)}")
         
-        # Appliquer le label encoding
-        df = apply_label_encoding(df, label_encoders)
+        # Étape 3 : Appliquer le One-Hot Encoding
+        try:
+            df = apply_one_hot_encoding(df, one_hot_columns)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur dans apply_one_hot_encoding : {str(e)}")
+
+        # Étape 4 : Appliquer la transformation Box-Cox
+        try:
+            df = apply_boxcox_transformations(df, lambda_params)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur dans apply_boxcox_transformations : {str(e)}")
         
-        # Appliquer le One-Hot Encoding en alignant avec les colonnes d'entraînement
-        df = apply_one_hot_encoding(df, one_hot_columns)
-        
-        # Appliquer la transformation Box-Cox
-        df = apply_boxcox_transformations(df, lambda_params)
-        
-        # Appliquer le scaler
-        df = apply_scaler(df, scaler)
-        
-        # Faire des prédictions avec le modèle CatBoost
-        predictions = predict_with_catboost(catboost_model, df)
+        # Étape 5 : Appliquer le scaler
+        try:
+            df = apply_scaler(df, scaler)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur dans apply_scaler : {str(e)}")
+
+        # Étape 6 : Prédire avec le modèle CatBoost
+        try:
+            predictions = predict_with_catboost(catboost_model, df)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erreur dans predict_with_catboost : {str(e)}")
 
         # Retourner les résultats
         return JSONResponse(content={"predictions": predictions.tolist()})
 
+    except HTTPException as e:
+        # L'erreur a déjà été traitée avec une fonction spécifique, donc juste la relancer
+        raise e
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Si une autre erreur inattendue se produit, la capturer ici
+        raise HTTPException(status_code=500, detail=f"Erreur inattendue : {str(e)}")
 
 # Démarrage de l'API
 if __name__ == '__main__':
