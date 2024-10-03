@@ -36,9 +36,8 @@ async def predict(file: UploadFile = File(...)):
         # Convertir le contenu en DataFrame
         df = pd.read_csv(io.BytesIO(contents))
         
-
-        (label_encoders, label_encoded_columns, one_hot_columns, scaler, 
-         transformed_columns, lambda_params, catboost_model) = load_preprocessing_objects(MODEL_FOLDER)
+        # Charger les objets de prétraitement
+        (label_encoders, one_hot_columns, scaler, transformed_columns, lambda_params, catboost_model) = load_preprocessing_objects(MODEL_FOLDER)
 
         # Appliquer les étapes de prétraitement
         df = add_features_and_correct_anomaly(df)  # Correction d'anomalies et ajout de features dérivées
