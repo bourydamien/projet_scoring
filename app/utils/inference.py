@@ -27,8 +27,8 @@ def install_requirements(requirements_file='requirements.txt'):
 # Charger les objets de preprocessing sauvegardés
 #avec param maintenant
 def load_preprocessing_objects(model_folder):
-    with open(os.path.join(model_folder, 'label_encoder.pkl'), 'rb') as f:
-        label_encoder = pickle.load(f)
+    with open(os.path.join(model_folder, 'label_encoders.pkl'), 'rb') as f:
+        label_encoders = pickle.load(f)
 
     with open(os.path.join(model_folder, 'label_encoded_columns.pkl'), 'rb') as f:
         label_encoded_columns = pickle.load(f)
@@ -48,7 +48,7 @@ def load_preprocessing_objects(model_folder):
     model = CatBoostClassifier()
     model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
 
-    return label_encoder, label_encoded_columns, one_hot_columns, scaler, transformed_columns, lambda_params, model
+    return label_encoders, label_encoded_columns, one_hot_columns, scaler, transformed_columns, lambda_params, model
 
 
 def add_features_and_correct_anomaly(df):
@@ -64,27 +64,25 @@ def add_features_and_correct_anomaly(df):
 
 
 
-def apply_label_encoding(df, label_encoded_columns, label_encoder):
+def apply_label_encoding(df, label_encoders):
     """
-    Encode les colonnes spécifiées dans un DataFrame avec un LabelEncoder.
+    Applique les LabelEncoders aux colonnes d'un DataFrame à partir d'un dictionnaire de LabelEncoders.
 
     Paramètres:
     df : pandas DataFrame
         Le DataFrame contenant les colonnes à encoder.
-    label_encoded_columns : list
-        La liste des colonnes à encoder.
-    label_encoder : LabelEncoder
-        L'instance de LabelEncoder à utiliser pour encoder les colonnes.
+    label_encoders : dict
+        Dictionnaire contenant un LabelEncoder pour chaque colonne encodée (clé = nom de colonne, valeur = LabelEncoder).
 
     Retourne:
     pandas DataFrame
         Le DataFrame avec les colonnes encodées.
     """
-    # Boucle sur chaque colonne spécifiée
-    for column in label_encoded_columns:
-        # Appliquer le LabelEncoder sur chaque colonne spécifiée
-        df[column] = label_encoder.transform(df[column])
-    
+    # Boucle sur chaque colonne et son LabelEncoder dans le dictionnaire
+    for column, le in label_encoders.items():
+        # Appliquer le LabelEncoder à la colonne
+        df[column] = le.transform(df[column])
+
     return df
 
 
