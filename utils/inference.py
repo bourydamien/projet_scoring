@@ -38,8 +38,9 @@ def load_preprocessing_objects(model_folder):
     with open(os.path.join(model_folder, 'lambda_params.json'), 'rb') as f:
         lambda_params = pickle.load(f)
     
-    with open(os.path.join(model_folder, 'catboost_model.pkl'), 'rb') as f:
-        catboost_model = pickle.load(f)
+    # Charger le modèle CatBoost
+    catboost_model = CatBoostClassifier()  # ou CatBoostRegressor
+    catboost_model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
 
     # Assurez-vous que vous retournez exactement 6 valeurs
     return label_encoders, one_hot_columns, scaler, None, lambda_params, catboost_model
