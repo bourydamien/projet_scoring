@@ -8,7 +8,7 @@ import io
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 import sys
-MODEL_FOLDER = "utils/models/"
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'utils')))
 
@@ -21,7 +21,7 @@ from utils.inference import (
     apply_scaler,
     predict_with_catboost
 )
-
+MODEL_FOLDER = "utils/models/"
 app = FastAPI()
 @app.get("/")
 async def root():
