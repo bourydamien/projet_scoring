@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 import sys
 
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'utils')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'app/utils')))
 
 from utils.inference import (
     load_preprocessing_objects,
@@ -36,8 +36,6 @@ async def predict(file: UploadFile = File(...)):
         # Convertir le contenu en DataFrame
         df = pd.read_csv(io.BytesIO(contents))
         
-        # Charger les objets de prétraitement
-        print(f"Using load_preprocessing_objects from: {load_preprocessing_objects.__module__}")
 
         (label_encoder, label_encoded_columns, one_hot_columns, scaler, 
          transformed_columns, lambda_params, catboost_model) = load_preprocessing_objects(MODEL_FOLDER)
