@@ -66,7 +66,6 @@ def add_features_and_correct_anomaly(df):
 def apply_label_encoding(df, label_encoders):
     """
     Applique les LabelEncoders aux colonnes d'un DataFrame à partir d'un dictionnaire de LabelEncoders.
-
     Paramètres:
     df : pandas DataFrame
         Le DataFrame contenant les colonnes à encoder.
@@ -88,7 +87,7 @@ def apply_label_encoding(df, label_encoders):
     return df
 
 
-
+#ohc
 
 
 def apply_one_hot_encoding(test_data, one_hot_encoded_columns):
