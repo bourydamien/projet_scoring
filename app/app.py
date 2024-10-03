@@ -37,14 +37,14 @@ async def predict(file: UploadFile = File(...)):
         df = pd.read_csv(io.BytesIO(contents))
         
 
-        (label_encoder, label_encoded_columns, one_hot_columns, scaler, 
+        (label_encoders, label_encoded_columns, one_hot_columns, scaler, 
          transformed_columns, lambda_params, catboost_model) = load_preprocessing_objects(MODEL_FOLDER)
 
         # Appliquer les étapes de prétraitement
         df = add_features_and_correct_anomaly(df)  # Correction d'anomalies et ajout de features dérivées
         
         # Appliquer le label encoding
-        df = apply_label_encoding(df, label_encoded_columns, label_encoder)
+        df = apply_label_encoding(df, label_encoders)
         
         # Appliquer le One-Hot Encoding en alignant avec les colonnes d'entraînement
         df = apply_one_hot_encoding(df, one_hot_columns)
