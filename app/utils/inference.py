@@ -25,6 +25,7 @@ def install_requirements(requirements_file='requirements.txt'):
 
 
 # Charger les objets de preprocessing sauvegardés
+#avec param maintenant
 def load_preprocessing_objects(model_folder):
     with open(os.path.join(model_folder, 'label_encoder.pkl'), 'rb') as f:
         label_encoder = pickle.load(f)
