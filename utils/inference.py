@@ -131,6 +131,8 @@ def apply_one_hot_encoding(test_data, one_hot_encoded_columns):
 
 
 
+
+
 def apply_boxcox_transformations(df, lambda_param):
     """
     Applique la transformation Box-Cox aux colonnes spécifiées dans lambda_param avec leurs paramètres respectifs.
@@ -139,18 +141,14 @@ def apply_boxcox_transformations(df, lambda_param):
     :param lambda_param: Dictionnaire contenant les colonnes et leurs paramètres lambda pour Box-Cox
     :return: DataFrame transformé
     """
-    df_transformed = df.copy()  # Créer une copie pour ne pas modifier l'original
+    df_transformed = df.copy()  # Créer une copie pour éviter de modifier l'original
     
     for column, lambda_value in lambda_param.items():
-        # Vérifier que la colonne existe dans le DataFrame
-        if column in df_transformed.columns:
-            # Appliquer la transformation Box-Cox (si tous les valeurs de la colonne sont positives)
-            if (df_transformed[column] > 0).all():
-                df_transformed[column], _ = stats.boxcox(df_transformed[column], lmbda=lambda_value)
-            else:
-                print(f"Attention : La transformation Box-Cox ne peut être appliquée à {column} car elle contient des valeurs <= 0.")
-    
+        if column in df_transformed.columns and (df_transformed[column] > 0).all():
+            df_transformed[column], _ = stats.boxcox(df_transformed[column] + 1, lmbda=lambda_value)  # Ajouter 1 pour éviter des valeurs <= 0
+
     return df_transformed
+
 
 def apply_scaler(df, scaler):
     """
