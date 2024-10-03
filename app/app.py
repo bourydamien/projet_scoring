@@ -9,6 +9,8 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 import sys
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+MODEL_FOLDER = os.path.join(BASE_DIR, 'models')  
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'utils')))
 
