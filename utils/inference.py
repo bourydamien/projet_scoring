@@ -35,7 +35,7 @@ def load_preprocessing_objects(model_folder):
     with open(os.path.join(model_folder, 'scaler.pkl'), 'rb') as f:
         scaler = pickle.load(f)
     
-    with open(os.path.join(model_folder, 'lambda_params.pkl'), 'rb') as f:
+    with open(os.path.join(model_folder, 'lambda_params.json'), 'rb') as f:
         lambda_params = pickle.load(f)
     
     with open(os.path.join(model_folder, 'catboost_model.pkl'), 'rb') as f:
