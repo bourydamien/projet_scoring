@@ -79,10 +79,14 @@ def apply_label_encoding(df, label_encoders):
     """
     # Boucle sur chaque colonne et son LabelEncoder dans le dictionnaire
     for column, le in label_encoders.items():
-        # Appliquer le LabelEncoder à la colonne
-        df[column] = le.transform(df[column])
-
+        if column in df.columns:
+            # Appliquer le LabelEncoder à la colonne
+            df[column] = le.transform(df[column])
+        else:
+            raise KeyError(f"La colonne {column} n'existe pas dans le DataFrame.")
+    
     return df
+
 
 
 
