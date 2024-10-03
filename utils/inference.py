@@ -26,24 +26,48 @@ def install_requirements(requirements_file='requirements.txt'):
 
 
 def load_preprocessing_objects(model_folder):
-    with open(os.path.join(model_folder, 'label_encoders.pkl'), 'rb') as f:
-        label_encoders = pickle.load(f)
-    
-    with open(os.path.join(model_folder, 'one_hot_columns.pkl'), 'rb') as f:
-        one_hot_columns = pickle.load(f)
-    
-    with open(os.path.join(model_folder, 'scaler.pkl'), 'rb') as f:
-        scaler = pickle.load(f)
-    
-    with open(os.path.join(model_folder, 'lambda_params.json'), 'rb') as f:
-        lambda_params = pickle.load(f)
-    
-    # Charger le modèle CatBoost
-    catboost_model = CatBoostClassifier()  # ou CatBoostRegressor
-    catboost_model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
+    try:
+        # Charger les encodeurs
+        with open(os.path.join(model_folder, 'label_encoders.pkl'), 'rb') as f:
+            label_encoders = pickle.load(f)
 
-    # Assurez-vous que vous retournez exactement 6 valeurs
-    return label_encoders, one_hot_columns, scaler, None, lambda_params, catboost_model
+        print("Label encoders chargés avec succès.")
+
+        # Charger les colonnes One-Hot
+        with open(os.path.join(model_folder, 'one_hot_columns.pkl'), 'rb') as f:
+            one_hot_columns = pickle.load(f)
+
+        print("Colonnes One-Hot chargées avec succès.")
+
+        # Charger le scaler
+        with open(os.path.join(model_folder, 'scaler.pkl'), 'rb') as f:
+            scaler = joblib.load(f)
+
+        print("Scaler chargé avec succès.")
+
+        # Charger les paramètres de transformation Box-Cox
+        with open(os.path.join(model_folder, 'lambda_params.pkl'), 'rb') as f:
+            lambda_params = pickle.load(f)
+
+        print("Paramètres de transformation Box-Cox chargés avec succès.")
+
+        # Charger le modèle CatBoost
+        catboost_model = CatBoostClassifier()  # ou CatBoostRegressor
+        catboost_model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
+
+        print("Modèle CatBoost chargé avec succès.")
+
+        return label_encoders, one_hot_columns, scaler, lambda_params, catboost_model
+
+    except FileNotFoundError as fnf_error:
+        raise ValueError(f"Erreur lors du chargement des objets de prétraitement : Fichier non trouvé - {fnf_error}")
+
+    except pickle.UnpicklingError as unpickling_error:
+        raise ValueError(f"Erreur lors du chargement des objets de prétraitement : Erreur de dé-sérialisation - {unpickling_error}")
+
+    except Exception as e:
+        raise ValueError(f"Erreur lors du chargement des objets de prétraitement : {str(e)}")
+
 
 def add_features_and_correct_anomaly(df):
     df['DAYS_EMPLOYED_ANOM'] = df["DAYS_EMPLOYED"] == 365243
