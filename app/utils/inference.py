@@ -25,28 +25,27 @@ def install_requirements(requirements_file='requirements.txt'):
 
 
 # Charger les objets de preprocessing sauvegardés
-def load_preprocessing_objects():
-    global MODEL_FOLDER
-    with open(os.path.join(MODEL_FOLDER, 'label_encoder.pkl'), 'rb') as f:
+def load_preprocessing_objects(model_folder):
+    with open(os.path.join(model_folder, 'label_encoder.pkl'), 'rb') as f:
         label_encoder = pickle.load(f)
 
-    with open(os.path.join(MODEL_FOLDER, 'label_encoded_columns.pkl'), 'rb') as f:
+    with open(os.path.join(model_folder, 'label_encoded_columns.pkl'), 'rb') as f:
         label_encoded_columns = pickle.load(f)
 
-    with open(os.path.join(MODEL_FOLDER, 'one_hot_columns.pkl'), 'rb') as f:
+    with open(os.path.join(model_folder, 'one_hot_columns.pkl'), 'rb') as f:
         one_hot_columns = pickle.load(f)
 
-    with open(os.path.join(MODEL_FOLDER, 'scaler.pkl'), 'rb') as f:
+    with open(os.path.join(model_folder, 'scaler.pkl'), 'rb') as f:
         scaler = joblib.load(f)
 
-    with open(os.path.join(MODEL_FOLDER, 'transformed_columns.json'), 'r') as f:
+    with open(os.path.join(model_folder, 'transformed_columns.json'), 'r') as f:
         transformed_columns = json.load(f)
 
-    with open(os.path.join(MODEL_FOLDER, 'lambda_params.json'), 'r') as f:
+    with open(os.path.join(model_folder, 'lambda_params.json'), 'r') as f:
         lambda_params = json.load(f)
 
     model = CatBoostClassifier()
-    model.load_model(os.path.join(MODEL_FOLDER, 'best_model_with_weights.cbm'))
+    model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
 
     return label_encoder, label_encoded_columns, one_hot_columns, scaler, transformed_columns, lambda_params, model
 
