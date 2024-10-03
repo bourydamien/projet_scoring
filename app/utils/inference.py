@@ -8,7 +8,8 @@ import pandas as pd
 import json
 from scipy import stats
 from catboost import CatBoostClassifier
-MODEL_FOLDER = os.path.join(os.path.dirname(__file__), 'models')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+MODEL_FOLDER = os.path.join(BASE_DIR, 'models')  
 
 def install_requirements(requirements_file='requirements.txt'):
     """
