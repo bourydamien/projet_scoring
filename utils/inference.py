@@ -8,7 +8,7 @@ import pandas as pd
 import json
 from scipy import stats
 from catboost import CatBoostClassifier
-
+from sklearn.impute import SimpleImputer
 
 def install_requirements(requirements_file='requirements.txt'):
     """
@@ -160,15 +160,21 @@ def apply_boxcox_transformations(df, lambda_param):
 
 def apply_scaler(df, scaler):
     """
-    Applique un scaler pré-entraîné a la Df
-    
+    Applique un scaler pré-entraîné à la DataFrame après imputation des NaN.
+
     :param df: DataFrame à transformer
     :param scaler: Scaler pré-entraîné 
     :return: DataFrame transformé
     """
-    # Appliquer le scaler sur les colonnes du DataFrame
-    df_scaled = pd.DataFrame(scaler.transform(df), columns=df.columns, index=df.index)
+    # Créer un imputer pour remplir les NaN avec la moyenne
+    imputer = SimpleImputer(strategy='mean')
     
+    # Imputer les valeurs manquantes
+    df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns, index=df.index)
+    
+    # Appliquer le scaler sur les colonnes du DataFrame
+    df_scaled = pd.DataFrame(scaler.transform(df_imputed), columns=df_imputed.columns, index=df_imputed.index)
+
     return df_scaled
 
 def predict_with_catboost(model, df):
