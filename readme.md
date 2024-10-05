@@ -38,6 +38,8 @@ Le projet contient les éléments suivants :
 
 - [Dossier Google Drive contenant les artefacts du modèle](hhttps://drive.google.com/drive/folders/13rQaqQWk_-hCT2pnFcfvcB40eCWILBDG?usp=sharing) : https://drive.google.com/drive/folders/13rQaqQWk_-hCT2pnFcfvcB40eCWILBDG?usp=sharing
 
+- Documentation MLflow : https://mlflow.org/docs/latest/index.html
+
 
 
 
