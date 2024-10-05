@@ -55,7 +55,7 @@ async def predict(file: UploadFile = File(...)):
         
         # Étape 3 : Appliquer le One-Hot Encoding
         try:
-            df = apply_one_hot_encoding(df, aligned_columns)
+            df = apply_one_hot_encoding(df, one_hot_columns)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_one_hot_encoding : {str(e)}")
 
@@ -64,21 +64,21 @@ async def predict(file: UploadFile = File(...)):
             df = apply_boxcox_transformations(df, lambda_params)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_boxcox_transformations : {str(e)}")
-        
-        # Étape 5 : Appliquer le scaler
+        return JSONResponse(content={"predictions": "sans le scaler"})
+        '''# Étape 5 : Appliquer le scaler
         try:
             df = apply_scaler(df, scaler)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_scaler : {str(e)}")
 
-        '''# Étape 6 : Prédire avec le modèle CatBoost
+        # Étape 6 : Prédire avec le modèle CatBoost
         try:
             predictions = predict_with_catboost(catboost_model, df)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans predict_with_catboost : {str(e)}")
-'''
+
         # Retourner les résultats
-        return JSONResponse(content={"message": "Scaling effectué avec succès."})
+        return JSONResponse(content={"predictions": predictions.tolist()})'''
 
     except HTTPException as e:
         # L'erreur a déjà été traitée avec une fonction spécifique, donc juste la relancer
