@@ -57,7 +57,10 @@ def load_preprocessing_objects(model_folder):
 
         print("Modèle CatBoost chargé avec succès.")
 
-        return label_encoders, one_hot_columns, scaler, lambda_params, catboost_model
+        with open(os.path.join(model_folder, 'aligned_columns.json'), 'rb') as f:
+            aligned_columns = json.load(f)
+
+        return label_encoders, one_hot_columns, scaler, lambda_params, catboost_model, aligned_columns
 
     except FileNotFoundError as fnf_error:
         raise ValueError(f"Erreur lors du chargement des objets de prétraitement : Fichier non trouvé - {fnf_error}")
@@ -109,25 +112,25 @@ def apply_label_encoding(df, label_encoders):
 #ohc
 
 
-def apply_one_hot_encoding(test_data, one_hot_encoded_columns):
+def apply_one_hot_encoding(test_data, aligned_columns):
     """
     Applique le One-Hot Encoding au fichier de test en s'assurant que les colonnes
-    sont alignées avec celles du One-Hot Encoding utilisé lors de l'entraînement.
+    sont alignées avec celles définies dans aligned_columns (les colonnes utilisées lors de l'entraînement).
 
     :param test_data: DataFrame des données de test
-    :param one_hot_encoded_columns: Liste des colonnes après One-Hot Encoding lors de l'entraînement
-    :return: DataFrame des données de test transformées
+    :param aligned_columns: Liste des colonnes à utiliser pour l'alignement (déjà chargées depuis un JSON)
+    :return: DataFrame des données de test transformées et alignées
     """
     # Appliquer le One-Hot Encoding aux données de test
     test_data_encoded = pd.get_dummies(test_data)
-    
-    # Aligner les colonnes du fichier de test avec celles utilisées à l'entraînement
-    # Remplir les colonnes manquantes avec des zéros
-    test_data_encoded = test_data_encoded.reindex(columns=one_hot_encoded_columns, fill_value=0)
-    
-    print(f"Forme des données de test après One-Hot Encoding et alignement: {test_data_encoded.shape}")
-    
-    return test_data_encoded
+
+    # Aligner les colonnes du fichier de test avec celles définies dans aligned_columns
+    # Ajouter des colonnes manquantes avec des zéros et retirer les colonnes en excès
+    test_data_encoded_aligned = test_data_encoded.reindex(columns=aligned_columns, fill_value=0)
+
+    print(f"Forme des données de test après One-Hot Encoding et alignement : {test_data_encoded_aligned.shape}")
+
+    return test_data_encoded_aligned
 
 
 
