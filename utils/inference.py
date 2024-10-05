@@ -114,8 +114,8 @@ def apply_label_encoding(df, label_encoders):
 
 def apply_one_hot_encoding(test_data, aligned_columns):
     """
-    Applique le One-Hot Encoding au fichier de test en s'assurant que les colonnes
-    sont alignées avec celles définies dans aligned_columns (les colonnes utilisées lors de l'entraînement).
+    Applique le One-Hot Encoding au fichier de test et s'assure que toutes les colonnes présentes dans aligned_columns
+    sont également dans test_data. Ajoute les colonnes manquantes avec des zéros si elles n'existent pas.
 
     :param test_data: DataFrame des données de test
     :param aligned_columns: Liste des colonnes à utiliser pour l'alignement (déjà chargées depuis un JSON)
@@ -123,14 +123,18 @@ def apply_one_hot_encoding(test_data, aligned_columns):
     """
     # Appliquer le One-Hot Encoding aux données de test
     test_data_encoded = pd.get_dummies(test_data)
-
-    # Aligner les colonnes du fichier de test avec celles définies dans aligned_columns
-    # Ajouter des colonnes manquantes avec des zéros et retirer les colonnes en excès
-    test_data_encoded_aligned = test_data_encoded.reindex(columns=aligned_columns, fill_value=0)
-
-    print(f"Forme des données de test après One-Hot Encoding et alignement : {test_data_encoded_aligned.shape}")
-
-    return test_data_encoded_aligned
+    
+    # Ajouter les colonnes manquantes avec des zéros
+    for col in aligned_columns:
+        if col not in test_data_encoded.columns:
+            test_data_encoded[col] = 0
+    
+    # Réordonner les colonnes pour correspondre à celles de aligned_columns
+    test_data_encoded = test_data_encoded[aligned_columns]
+    
+    print(f"Forme des données de test après One-Hot Encoding et alignement : {test_data_encoded.shape}")
+    
+    return test_data_encoded
 
 
 
