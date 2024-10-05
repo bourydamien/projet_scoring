@@ -131,7 +131,12 @@ def apply_one_hot_encoding(test_data, aligned_columns):
             test_data_encoded[col] = 0
     
     # Réordonner les colonnes pour correspondre à celles de aligned_columns
-    test_data_encoded = test_data_encoded[aligned_columns]
+    # Intersection des colonnes entre aligned_columns (train) et test_data_encoded.columns (test)
+    common_columns = test_data_encoded.columns.intersection(aligned_columns)
+
+    # Réordonner le jeu de test avec uniquement les colonnes communes
+    test_data_encoded = test_data_encoded[aligned_columns[aligned_columns.isin(common_columns)]]
+
     
     print(f"Forme des données de test après One-Hot Encoding et alignement : {test_data_encoded.shape}")
     
