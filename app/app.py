@@ -9,6 +9,34 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 import sys
 
+def check_dataframe(df, scaler):
+    """
+    Vérifie l'intégrité du DataFrame avant l'application du scaler.
+    
+    :param df: DataFrame à vérifier
+    :param scaler: Scaler pré-entraîné
+    :return: Dictionnaire contenant l'état de la vérification
+    """
+    issues = []
+
+    # Vérifier les valeurs manquantes
+    if df.isnull().values.any():
+        issues.append("Le DataFrame contient des valeurs manquantes.")
+
+    # Vérifier les valeurs infinies
+    if np.isinf(df.values).any():
+        issues.append("Le DataFrame contient des valeurs infinies.")
+
+    # Vérifier les dimensions
+    if df.shape[1] != scaler.n_features_in_:
+        issues.append(f"Le DataFrame a {df.shape[1]} colonnes, alors que le scaler attend {scaler.n_features_in_} colonnes.")
+
+    # Vérifier les colonnes
+    if not all(col in df.columns for col in scaler.feature_names_in_):
+        missing_cols = set(scaler.feature_names_in_) - set(df.columns)
+        issues.append(f"Les colonnes suivantes sont manquantes dans le DataFrame : {', '.join(missing_cols)}")
+
+    return issues
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'app/utils')))
 
@@ -64,7 +92,8 @@ async def predict(file: UploadFile = File(...)):
             df = apply_boxcox_transformations(df, lambda_params)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_boxcox_transformations : {str(e)}")
-        return JSONResponse(content={"predictions": "sans le scaler"})
+        issue = check_dataframe(df, scaler)
+        return JSONResponse(content={"predictions": issue})
         '''# Étape 5 : Appliquer le scaler
         try:
             df = apply_scaler(df, scaler)
