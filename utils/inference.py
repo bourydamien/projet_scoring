@@ -57,8 +57,9 @@ def load_preprocessing_objects(model_folder):
 
         print("Modèle CatBoost chargé avec succès.")
 
-        with open(os.path.join(model_folder, 'aligned_columns.json'), 'rb') as f:
+        with open(os.path.join(model_folder, 'aligned_columns.json'), 'r') as f:
             aligned_columns = json.load(f)
+        aligned_columns = aligned_columns['aligned_columns']
 
         return label_encoders, one_hot_columns, scaler, lambda_params, catboost_model, aligned_columns
 
