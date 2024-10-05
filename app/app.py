@@ -30,8 +30,7 @@ async def root():
 # Point d'entrée pour prédiction
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    return JSONResponse(content={"message": "Fichier reçu avec succès."})
-    '''try:
+    try:
         # Lire le fichier uploadé
         contents = await file.read()
         df = pd.read_csv(io.BytesIO(contents))
@@ -72,14 +71,14 @@ async def predict(file: UploadFile = File(...)):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_scaler : {str(e)}")
 
-        # Étape 6 : Prédire avec le modèle CatBoost
+        '''# Étape 6 : Prédire avec le modèle CatBoost
         try:
             predictions = predict_with_catboost(catboost_model, df)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans predict_with_catboost : {str(e)}")
-
+'''
         # Retourner les résultats
-        return JSONResponse(content={"predictions": predictions.tolist()})
+        return JSONResponse(content={"message": "Scaling effectué avec succès."})
 
     except HTTPException as e:
         # L'erreur a déjà été traitée avec une fonction spécifique, donc juste la relancer
@@ -87,7 +86,7 @@ async def predict(file: UploadFile = File(...)):
 
     except Exception as e:
         # Si une autre erreur inattendue se produit, la capturer ici
-        raise HTTPException(status_code=500, detail=f"Erreur inattendue : {str(e)}")'''
+        raise HTTPException(status_code=500, detail=f"Erreur inattendue : {str(e)}")
 
 # Démarrage de l'API
 if __name__ == '__main__':
