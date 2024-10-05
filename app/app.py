@@ -30,7 +30,8 @@ async def root():
 # Point d'entrée pour prédiction
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    try:
+    return JSONResponse(content={"message": "Fichier reçu avec succès."})
+    '''try:
         # Lire le fichier uploadé
         contents = await file.read()
         df = pd.read_csv(io.BytesIO(contents))
@@ -86,7 +87,7 @@ async def predict(file: UploadFile = File(...)):
 
     except Exception as e:
         # Si une autre erreur inattendue se produit, la capturer ici
-        raise HTTPException(status_code=500, detail=f"Erreur inattendue : {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur inattendue : {str(e)}")'''
 
 # Démarrage de l'API
 if __name__ == '__main__':
