@@ -55,7 +55,7 @@ async def predict(file: UploadFile = File(...)):
         
         # Étape 3 : Appliquer le One-Hot Encoding
         try:
-            df = apply_one_hot_encoding(df, one_hot_columns)
+            df = apply_one_hot_encoding(df, aligned_columns)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_one_hot_encoding : {str(e)}")
         forma_ohc = df.shape
