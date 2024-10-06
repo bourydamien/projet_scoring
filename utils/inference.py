@@ -191,20 +191,13 @@ def apply_scaler(df, scaler):
 
 def predict_with_catboost(model, df):
     """
-    Applique un modèle CatBoost pré-entraîné sur un DataFrame prétraité pour faire des prédictions,
-    en utilisant un seuil de probabilité fixe de 0.65 pour déterminer les classes.
-
+    Applique un modèle CatBoost pré-entraîné sur un DataFrame prétraité pour faire des prédictions.
+    
     :param model: Modèle CatBoost pré-entraîné
     :param df: DataFrame contenant les données déjà prétraitées (scalées, encodées, etc.)
-    :return: Les prédictions faites par le modèle sur les données (0 ou 1)
+    :return: Les prédictions faites par le modèle sur les données
     """
-    # Définir le seuil de probabilité
-    seuil = 0.65
-
-    # Faire des prédictions de probabilités avec le modèle CatBoost
-    probabilities = model.predict_proba(df)[:, 1]  # Prend la probabilité d'appartenir à la classe 1
-
-    # Appliquer le seuil pour convertir les probabilités en prédictions binaires
-    predictions = (probabilities >= seuil).astype(int)
+    # Faire des prédictions en utilisant le modèle CatBoost pré-entraîné
+    predictions = model.predict(df)
     
     return predictions
