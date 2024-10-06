@@ -1,4 +1,5 @@
 import os
+import gc
 import json
 import numpy as np
 import pandas as pd
@@ -76,6 +77,11 @@ async def predict(file: UploadFile = File(...)):
             predictions = predict_with_catboost(catboost_model, df)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans predict_with_catboost : {str(e)}")
+        # Libérer la mémoire après la prédiction
+        del df, label_encoders, one_hot_columns, scaler, lambda_params, aligned_columns
+        gc.collect()  
+        # Retourner les résultats
+        return JSONResponse(content={"predictions": predictions.tolist()})
 
         # Retourner les résultats
         return JSONResponse(content={"predictions": predictions.tolist()})
