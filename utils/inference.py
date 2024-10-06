@@ -27,7 +27,7 @@ def install_requirements(requirements_file='requirements.txt'):
 
 def load_preprocessing_objects(model_folder):
     try:
-        # Charger les encodeurs
+        # Charger le labal encodeur
         with open(os.path.join(model_folder, 'label_encoders.pkl'), 'rb') as f:
             label_encoders = pickle.load(f)
 
@@ -37,7 +37,7 @@ def load_preprocessing_objects(model_folder):
         with open(os.path.join(model_folder, 'one_hot_columns.pkl'), 'rb') as f:
             one_hot_columns = pickle.load(f)
 
-        print("Colonnes One-Hot chargées avec succès.")
+        print("Colonnes Ohc chargées avec succès.")
 
         # Charger le scaler
         with open(os.path.join(model_folder, 'scaler.pkl'), 'rb') as f:
@@ -52,7 +52,7 @@ def load_preprocessing_objects(model_folder):
         print("Paramètres de transformation Box-Cox chargés avec succès.")
 
         # Charger le modèle CatBoost
-        catboost_model = CatBoostClassifier()  # ou CatBoostRegressor
+        catboost_model = CatBoostClassifier()  
         catboost_model.load_model(os.path.join(model_folder, 'best_model_with_weights.cbm'))
 
         print("Modèle CatBoost chargé avec succès.")
@@ -60,6 +60,7 @@ def load_preprocessing_objects(model_folder):
         with open(os.path.join(model_folder, 'aligned_columns.json'), 'r') as f:
             aligned_columns = json.load(f)
         aligned_columns = aligned_columns['aligned_columns']
+        print("Json pour aligner les colonnes chargé avec succès.")
 
         return label_encoders, one_hot_columns, scaler, lambda_params, catboost_model, aligned_columns
 
@@ -74,6 +75,10 @@ def load_preprocessing_objects(model_folder):
 
 
 def add_features_and_correct_anomaly(df):
+    '''Correction des colonnes comportant des anomalies et création de nouvelles colonnes
+    pram df: dataframe pandas : La dataframe avant correction
+    return df: dataframe pandas : la df après correction'''
+
     df['DAYS_EMPLOYED_ANOM'] = df["DAYS_EMPLOYED"] == 365243
     df['DAYS_EMPLOYED'].replace({365243: np.nan}, inplace=True)
 
@@ -119,7 +124,7 @@ def apply_one_hot_encoding(test_data, aligned_columns):
     sont également dans test_data. Ajoute les colonnes manquantes avec des zéros si elles n'existent pas.
 
     :param test_data: DataFrame des données de test
-    :param aligned_columns: Liste des colonnes à utiliser pour l'alignement (déjà chargées depuis un JSON)
+    :param aligned_columns: Liste des colonnes à utiliser pour l'alignement 
     :return: DataFrame des données de test transformées et alignées
     """
     # Appliquer le One-Hot Encoding aux données de test
@@ -156,7 +161,7 @@ def apply_boxcox_transformations(df, lambda_param):
     :param lambda_param: Dictionnaire contenant les colonnes et leurs paramètres lambda pour Box-Cox
     :return: DataFrame transformé
     """
-    df_transformed = df.copy()  # Créer une copie pour ne pas modifier l'original
+    df_transformed = df.copy()  
 
     for column, lambda_value in lambda_param.items():
         if column in df_transformed.columns and (df_transformed[column] > 0).all():
@@ -186,13 +191,20 @@ def apply_scaler(df, scaler):
 
 def predict_with_catboost(model, df):
     """
-    Applique un modèle CatBoost pré-entraîné sur un DataFrame prétraité pour faire des prédictions.
-    
+    Applique un modèle CatBoost pré-entraîné sur un DataFrame prétraité pour faire des prédictions,
+    en utilisant un seuil de probabilité fixe de 0.65 pour déterminer les classes.
+
     :param model: Modèle CatBoost pré-entraîné
     :param df: DataFrame contenant les données déjà prétraitées (scalées, encodées, etc.)
-    :return: Les prédictions faites par le modèle sur les données
+    :return: Les prédictions faites par le modèle sur les données (0 ou 1)
     """
-    # Faire des prédictions en utilisant le modèle CatBoost pré-entraîné
-    predictions = model.predict(df)
+    # Définir le seuil de probabilité
+    seuil = 0.65
+
+    # Faire des prédictions de probabilités avec le modèle CatBoost
+    probabilities = model.predict_proba(df)[:, 1]  # Prend la probabilité d'appartenir à la classe 1
+
+    # Appliquer le seuil pour convertir les probabilités en prédictions binaires
+    predictions = (probabilities >= seuil).astype(int)
     
     return predictions
