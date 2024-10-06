@@ -137,7 +137,8 @@ def apply_one_hot_encoding(test_data, aligned_columns):
 
     # Ajouter les colonnes restantes de aligned_columns qui ne sont pas dans common_columns
     test_data_encoded = test_data_encoded.reindex(columns=aligned_columns, fill_value=0)
-
+    # Supprimer les colonnes qui ne sont pas présentes dans aligned_columns
+    test_data_encoded = test_data_encoded[test_data_encoded.columns.intersection(aligned_columns)]
     
     print(f"Forme des données de test après One-Hot Encoding et alignement : {test_data_encoded.shape}")
     
