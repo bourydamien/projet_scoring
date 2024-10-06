@@ -65,7 +65,7 @@ async def predict(file: UploadFile = File(...)):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans apply_boxcox_transformations : {str(e)}")
         
-        '''# Étape 5 : Appliquer le scaler
+        # Étape 5 : Appliquer le scaler
         try:
             df = apply_scaler(df, scaler)
         except Exception as e:
@@ -76,10 +76,10 @@ async def predict(file: UploadFile = File(...)):
             predictions = predict_with_catboost(catboost_model, df)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans predict_with_catboost : {str(e)}")
-'''
+
         # Retourner les résultats
-        #return JSONResponse(content={"predictions": predictions.tolist()})
-        return JSONResponse(content={"predictions": forma_ohc})
+        return JSONResponse(content={"predictions": predictions.tolist()})
+        #return JSONResponse(content={"predictions": forma_ohc})
 
     except HTTPException as e:
         # L'erreur a déjà été traitée avec une fonction spécifique, donc juste la relancer
