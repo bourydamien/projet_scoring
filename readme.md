@@ -17,7 +17,7 @@ Ce projet consiste en la création d'un modèle de **scoring crédit** pour une 
 
 Le projet contient les éléments suivants :
 
-1. **Notebook d'entraînement** : `scoring_colab_catboost_gpu.ipynb`
+1. **Notebook d'entraînement** : `modelisation_scoring_colab_catboost_gpu.ipynb` et `modélisation_Catboost_optimisation_seuil_scoring.ipynb`
    - Entraînement et comparaison de plusieurs modèles sur Google Colab en utilisant un GPU.
    - Suivi des expérimentations via MLflow et enregistrement des artefacts (modèles et transformations) sur Google Drive.
 
