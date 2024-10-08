@@ -14,7 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'app/utils')))
 
-from app.utils.inference import (
+from utils.inference import (
     load_preprocessing_objects,
     add_features_and_correct_anomaly,
     apply_label_encoding,
