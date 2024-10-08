@@ -1,3 +1,4 @@
+
 import os
 import gc
 import json
@@ -13,7 +14,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'app/utils')))
 
-from utils.inference import (
+from app.utils.inference import (
     load_preprocessing_objects,
     add_features_and_correct_anomaly,
     apply_label_encoding,
@@ -48,47 +49,28 @@ async def predict(file: UploadFile = File(...)):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur dans add_features_and_correct_anomaly : {str(e)}")
 
-        # Étape 2 : Appliquer le label encoding
-        try:
-            df = apply_label_encoding(df, label_encoders)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Erreur dans apply_label_encoding : {str(e)}")
+        # Appliquer les étapes de prétraitement
+        df = add_features_and_correct_anomaly(df)
+        df = apply_label_encoding(df, label_encoders)
+        df = apply_one_hot_encoding(df, aligned_columns)
+        df = apply_boxcox_transformations(df, lambda_params)
+        df = apply_scaler(df, scaler)
         
-        # Étape 3 : Appliquer le One-Hot Encoding
-        try:
-            df = apply_one_hot_encoding(df, aligned_columns)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Erreur dans apply_one_hot_encoding : {str(e)}")
-        forma_ohc = df.shape
-        # Étape 4 : Appliquer la transformation Box-Cox
-        try:
-            df = apply_boxcox_transformations(df, lambda_params)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Erreur dans apply_boxcox_transformations : {str(e)}")
-        
-        # Étape 5 : Appliquer le scaler
-        try:
-            df = apply_scaler(df, scaler)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Erreur dans apply_scaler : {str(e)}")
+        # Faire les prédictions
+        predictions = predict_with_catboost(catboost_model, df)
 
-        # Étape 6 : Prédire avec le modèle CatBoost
-        try:
-            predictions = predict_with_catboost(catboost_model, df)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Erreur dans predict_with_catboost : {str(e)}")
-        # Libérer la mémoire après la prédiction
-        del df, label_encoders, one_hot_columns, scaler, lambda_params, aligned_columns
-        gc.collect()  
-        # Retourner les résultats
-        return JSONResponse(content={"predictions": predictions.tolist()})
+        # Retourner les prédictions
+        #return {"predictions": predictions.tolist(), "pred" : predictions.tolist()}
+        return predictions
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur lors de la prédiction : {e}")
 
         # Retourner les résultats
-        return JSONResponse(content={"predictions": predictions.tolist()})
+        #return JSONResponse(content={"predictions": predictions.tolist()})
         #return JSONResponse(content={"predictions": forma_ohc})
 
     except HTTPException as e:
-        # L'erreur a déjà été traitée avec une fonction spécifique, donc juste la relancer
         raise e
 
     except Exception as e:
