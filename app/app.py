@@ -55,7 +55,8 @@ async def predict(file: UploadFile = File(...)):
         # Faire les prédictions
         predictions = predict_with_catboost(catboost_model, df)
         #return predictions
-        return JSONResponse(content={"predictions": predictions.tolist()})
+        return predictions
+        #return JSONResponse(content={"predictions": predictions.tolist()})
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Erreur lors de la prédiction : {e}")
