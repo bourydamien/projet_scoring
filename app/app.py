@@ -43,11 +43,7 @@ async def predict(file: UploadFile = File(...)):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur lors du chargement des objets de prétraitement : {str(e)}")
 
-        # Étape 1 : Correction des anomalies et ajout de features dérivées
-        try:
-            df = add_features_and_correct_anomaly(df)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Erreur dans add_features_and_correct_anomaly : {str(e)}")
+    
 
         # Appliquer les étapes de prétraitement
         df = add_features_and_correct_anomaly(df)
