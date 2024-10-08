@@ -53,9 +53,9 @@ async def predict(file: UploadFile = File(...)):
         df = apply_scaler(df, scaler)
         
         # Faire les prédictions
-        predictions = predict_with_catboost(catboost_model, df)
+        #predictions = predict_with_catboost(catboost_model, df)
         #return predictions
-        return predictions
+        return {"test" : "test avant predic"}
         #return JSONResponse(content={"predictions": predictions.tolist()})
 
     except Exception as e:
